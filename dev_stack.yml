@@ -1,0 +1,54 @@
+## Docs -> https://github.com/compose-spec/compose-spec/blob/master/spec.md
+version: '3.9'
+
+services:
+  postgres:
+    container_name: postgres_container
+    image: postgres:15-bullseye
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-usermdp}
+      PGDATA: /data/postgres
+    volumes:
+      - type: volume
+        source: postgres
+        target: /data/postgres
+        read_only: false
+        volume:
+          nocopy: false
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: on-failure
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: elestio/pgadmin:REL-8_4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_LISTEN_PORT: 5454
+    volumes:
+      - type: volume
+        source: pgadmin
+        target: /var/lib/pgadmin
+        read_only: false
+        volume:
+          nocopy: false
+    ports:
+      - "8081:5454"
+    networks:
+      - postgres
+    restart: on-failure
+
+networks:
+  postgres:
+    name: learn_network
+    driver: bridge
+
+volumes:
+  postgres:
+    name: db_volume
+  pgadmin:
+    name: pg_volume
