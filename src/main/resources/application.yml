@@ -9,9 +9,28 @@ spring:
     password: usermdp
     type: com.zaxxer.hikari.HikariDataSource
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,shutdown,metrics
+  endpoint:
+    shutdown:
+      enabled: ${IS_ACTUATOR_SHUTDOWN:false}
+    health:
+      group:
+        custom:
+          showComponents: always
+          showDetails: always
+
   flyway:
     baseline-on-migrate: true
     schemas: learn
     out-of-order: false
     connect-retries: 2
     connect-retries-interval: 2
+
+  app:
+    http:
+      timeout-get: ${TIMEOUT_GET:15000}
+      timeout-other: ${TIMEOUT_OTHER:60000}
